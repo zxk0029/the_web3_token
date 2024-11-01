@@ -161,7 +161,7 @@ forge script script/DeployTokenV2.s.sol
     - 用户猜测 1-6 之间的数字
     - 猜对可获得 ETH 奖励 (0.001 ETH)
     - 猜对可获得代币奖励 (随机数 * 10^18 tokens)
-    - TODO: 将 block.timestamp 随机数改为 Chainlink VRF 等安全的链下随机数源
+    - TODO: 将 block.timestamp 随机数改为 [Chainlink VRF 等安全的链下随机数源](https://www.wtf.academy/docs/solidity-103/Random/)
   
   - 合约管理功能
     - 提现功能 (withdraw): 管理员可提取合约中的 ETH

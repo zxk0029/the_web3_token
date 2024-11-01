@@ -1,39 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {Script} from "forge-std/Script.sol";
-import {TheWeb3TokenV2} from "../src/TheWeb3TokenV2.sol";
-import {TransparentUpgradeableProxy} from "openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
-import {ProxyAdmin} from "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
-import {ITransparentUpgradeableProxy} from "openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import "forge-std/Script.sol";
+import "../src/TheWeb3TokenV2.sol";
+import "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "openzeppelin-contracts/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 
-contract DeployTokenV2Script is Script {
-    uint256 public constant INITIAL_SUPPLY = 1000000 * 10**18;
-
-    function run() public {
+contract DeployTokenV2 is Script {
+    function run() external {
+        // 获取代理合约地址
+        address payable proxyAddress = payable(vm.envAddress("PROXY_ADDRESS"));
+        
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        address proxyAddress = vm.envAddress("PROXY_ADDRESS");
-        address proxyAdminAddress = vm.envAddress("PROXY_ADMIN_ADDRESS");
-
         vm.startBroadcast(deployerPrivateKey);
 
         // 部署新的实现合约
-        TheWeb3TokenV2 tokenV2 = new TheWeb3TokenV2();
+        TheWeb3TokenV2 implementation = new TheWeb3TokenV2();
+        
+        // 将代理合约转换为 V2
+        TheWeb3TokenV2 upgradedToken = TheWeb3TokenV2(proxyAddress);
+        
+        // 升级到新的实现
+        upgradedToken.upgradeToAndCall(address(implementation), "");
 
-        // 获取 ProxyAdmin 实例
-        ProxyAdmin proxyAdmin = ProxyAdmin(proxyAdminAddress);
-
-        // 准备初始化数据
-        bytes memory initData = abi.encodeWithSelector(
-            TheWeb3TokenV2.initializeV2.selector
-        );
-
-        // 升级代理
-        proxyAdmin.upgradeAndCall(
-            ITransparentUpgradeableProxy(proxyAddress),
-            address(tokenV2),
-            initData
-        );
+        console.log("Proxy Address: %s", address(upgradedToken));
+        console.log("New Implementation Address: %s", address(implementation));
+        console.log("Deployer Address: %s", msg.sender);
+        console.log("Upgrade successful");
+        console.log("New mint fee: %s", upgradedToken.mintFee());
 
         vm.stopBroadcast();
     }

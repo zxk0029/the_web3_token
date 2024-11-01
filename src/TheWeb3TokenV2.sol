@@ -5,7 +5,7 @@ import "./TheWeb3TokenV1.sol";
 
 contract TheWeb3TokenV2 is TheWeb3TokenV1 {
     uint256 public mintFee;
-    uint256 public constant MINT_LIMIT = 10 * 10 ** 18;
+    uint256 public MINT_LIMIT;
 
     mapping(address => uint256) public mintedAmount;
     mapping(address => bool) public taskCompleted;
@@ -16,7 +16,11 @@ contract TheWeb3TokenV2 is TheWeb3TokenV1 {
     }
 
     function initializeV2() public reinitializer(2) {
-        mintFee = 0.01 ether;
+        mintFee = 0.001 ether;
+        MINT_LIMIT = 10 * 10 ** decimals();
+        if (owner == address(0)) {
+            owner = msg.sender;
+        }
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -27,20 +31,26 @@ contract TheWeb3TokenV2 is TheWeb3TokenV1 {
     }
 
     function mint(uint256 amount) external {
-        require(mintedAmount[msg.sender] + amount <= MINT_LIMIT, "Mint limit exceeded");
-        require(amount <= remainingSupply, "Insufficient remaining supply");
+        // Convert amount to tokens with decimals
+        uint256 tokenAmount = amount * 10 ** decimals();
         
-        mintedAmount[msg.sender] += amount;
-        remainingSupply -= amount;
-        _mint(msg.sender, amount);
+        require(mintedAmount[msg.sender] + tokenAmount <= MINT_LIMIT, "Mint limit exceeded");
+        require(tokenAmount <= remainingSupply, "Insufficient remaining supply");
+        
+        mintedAmount[msg.sender] += tokenAmount;
+        remainingSupply -= tokenAmount;
+        _mint(msg.sender, tokenAmount);
     }
 
     function mintWithFee(uint256 amount) external payable {
-        require(msg.value >= mintFee, "Insufficient mint fee");
-        require(amount <= remainingSupply, "Insufficient remaining supply");
+        // Convert amount to tokens with decimals
+        uint256 tokenAmount = amount * 10 ** decimals();
         
-        remainingSupply -= amount;
-        _mint(msg.sender, amount);
+        require(msg.value >= mintFee, "Insufficient mint fee");
+        require(tokenAmount <= remainingSupply, "Insufficient remaining supply");
+        
+        remainingSupply -= tokenAmount;
+        _mint(msg.sender, tokenAmount);
     }
 
     function completeGuess(uint8 guessedNumber) external payable {
@@ -59,10 +69,13 @@ contract TheWeb3TokenV2 is TheWeb3TokenV1 {
     }
 
     function withdraw() external onlyOwner {
-        payable(owner).transfer(address(this).balance);
+        uint256 balance = address(this).balance;
+        payable(owner).transfer(balance);
     }
 
     function getRemainingSupply() external view override returns (uint256) {
         return remainingSupply;
     }
+
+    receive() external payable {}
 }

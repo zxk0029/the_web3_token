@@ -38,14 +38,30 @@ fi
 
 # 部署合约
 echo "Deploying contract to Holesky testnet..."
-forge script script/DeployToken.s.sol:DeployToken \
+DEPLOY_OUTPUT=$(forge script script/DeployToken.s.sol \
     --rpc-url $HOLESKY_RPC_URL \
     --broadcast \
     --verify \
     --etherscan-api-key ${ETHERSCAN_API_KEY} \
-    --private-key $PRIVATE_KEY
+    --private-key $PRIVATE_KEY)
 
 if [ $? -eq 0 ]; then
+    # Extract proxy address from the output using grep and awk
+    PROXY_ADDRESS=$(echo "$DEPLOY_OUTPUT" | grep "Proxy deployed at:" | awk '{print $4}')
+    
+    # Check if PROXY_ADDRESS was found
+    if [ ! -z "$PROXY_ADDRESS" ]; then
+        # Check if PROXY_ADDRESS already exists in .env
+        if grep -q "PROXY_ADDRESS=" .env; then
+            # Update existing PROXY_ADDRESS
+            sed -i '' "s/PROXY_ADDRESS=.*/PROXY_ADDRESS=$PROXY_ADDRESS/" .env
+        else
+            # Add new PROXY_ADDRESS
+            echo "PROXY_ADDRESS=$PROXY_ADDRESS" >> .env
+        fi
+        echo "PROXY_ADDRESS has been saved to .env file"
+    fi
+    
     echo "Deployment and verification completed successfully!"
 else
     echo "Deployment failed!"

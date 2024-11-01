@@ -333,3 +333,7 @@ UUPS (Universal Upgradeable Proxy Standard) 是一种代理模式：
 
 ## 许可证
 MIT License
+
+## 文档
+- [开发和测试指南](development.md)
+- [事件日志解析指南](event-logs.md)

@@ -22,13 +22,13 @@ contract TheWeb3TokenV2Test is TestSetup {
         UUPSUpgradeable(address(proxy)).upgradeToAndCall(address(tokenV2), "");
         
         // 初始化 V2
-        TheWeb3TokenV2(address(proxy)).initializeV2();
+        TheWeb3TokenV2(payable(address(proxy))).initializeV2();
         
         vm.stopPrank();
     }
     
     function test_UpgradeToV2() public view {
-        assertEq(TheWeb3TokenV2(address(proxy)).owner(), owner);
-        assertEq(TheWeb3TokenV2(address(proxy)).mintFee(), 0.01 ether);
+        assertEq(TheWeb3TokenV2(payable(address(proxy))).owner(), owner);
+        assertEq(TheWeb3TokenV2(payable(address(proxy))).mintFee(), 0.01 ether);
     }
 } 

@@ -38,6 +38,12 @@ if [[ ! "$PRIVATE_KEY" =~ ^0x ]]; then
     exit 1
 fi
 
+# Check required environment variables
+if [ -z "$PROXY_ADDRESS" ]; then
+    echo "Error: PROXY_ADDRESS environment variable is not set"
+    exit 1
+fi
+
 # Clean and build
 echo "Building the project..."
 forge clean

@@ -5,7 +5,7 @@ import "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts/contracts/proxy/utils/UUPSUpgradeable.sol";
 
-contract TheWeb3TokenV1 is ERC20, Initializable, UUPSUpgradeable {
+contract TheWeb3TokenV1 is Initializable, ERC20, UUPSUpgradeable {
     address public owner;
     uint256 public remainingSupply;
 

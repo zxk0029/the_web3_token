@@ -1,14 +1,40 @@
-# Compiler files
+# Foundry
 cache/
 out/
+forge-cache/
+broadcast/
 
-# Ignores development broadcast logs
-!/broadcast
-/broadcast/*/31337/
-/broadcast/**/dry-run/
+# Dependencies
+lib/
+node_modules/
 
-# Docs
-docs/
-
-# Dotenv file
+# Environment variables
 .env
+.env.local
+.env.prod
+.env.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Debug files
+*.log
+debug/
+
+# Coverage
+coverage/
+coverage.json
+lcov.info
+
+# Misc
+.gas-snapshot
+artifacts/
+typechain/
+typechain-types/
+
+# Local development
+anvil.log

@@ -58,13 +58,13 @@ echo "This script will perform the following steps:"
 echo "1. Deploy TokenV2 implementation"
 echo "2. Upgrade proxy to V2"
 
-# Ask for confirmation
-echo -e "\nAre you sure you want to proceed with the upgrade process? (y/n)"
-read -r response
-if [[ ! "$response" =~ ^[Yy]$ ]]; then
-    echo "Operation cancelled"
-    exit 1
-fi
+# # Ask for confirmation
+# echo -e "\nAre you sure you want to proceed with the upgrade process? (y/n)"
+# read -r response
+# if [[ ! "$response" =~ ^[Yy]$ ]]; then
+#     echo "Operation cancelled"
+#     exit 1
+# fi
 
 echo "Step 1: Deploy TokenV2 implementation"
 forge script script/DeployTokenV2.s.sol \

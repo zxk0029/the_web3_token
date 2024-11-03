@@ -14,20 +14,14 @@ fi
 # 安装 OpenZeppelin 合约库并避免 Git 提交冲突
 echo "Installing OpenZeppelin Contracts..."
 forge install OpenZeppelin/openzeppelin-contracts --no-commit
+forge install OpenZeppelin/openzeppelin-contracts-upgradeable --no-commit
 
-# 从 OpenZeppelin Contracts 5.0 版本开始，openzeppelin-contracts 已经包含了所有可升级合约的内容，不再需要单独安装 openzeppelin-contracts-upgradeable
-#forge install OpenZeppelin/openzeppelin-contracts-upgradeable --no-commit
-
-
-# 生成或更新 remappings.txt
-echo "Generating remappings..."
-forge remappings > remappings.txt
-
-# 在 foundry.toml 中添加 remappings 配置
-if ! grep -q "remappings" foundry.toml; then
-    echo 'remappings = ["openzeppelin-contracts/=lib/openzeppelin-contracts/"]' >> foundry.toml
-else
-    echo "Remappings already configured in foundry.toml."
-fi
+# 直接创建精简的 remappings.txt
+echo "Creating remappings.txt..."
+cat > remappings.txt << EOF
+@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/
+@openzeppelin/=lib/openzeppelin-contracts/contracts/
+forge-std/=lib/forge-std/src/
+EOF
 
 echo "Setup completed!"

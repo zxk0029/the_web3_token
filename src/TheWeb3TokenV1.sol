@@ -1,26 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import "openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
-import "openzeppelin-contracts/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract TheWeb3TokenV1 is Initializable, ERC20, UUPSUpgradeable {
+contract TheWeb3TokenV1 is Initializable, ERC20Upgradeable, UUPSUpgradeable {
     address public owner;
     uint256 public remainingSupply;
 
-    constructor() ERC20("the_web3", "WEB3") {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
         _disableInitializers();
     }
 
-    function initialize(uint256 initialSupply) public virtual initializer {
+    function initialize(uint256 initialSupply) public initializer {
         require(initialSupply > 0, "Initial supply must be greater than 0");
         owner = msg.sender;
         remainingSupply = initialSupply;
         _mint(msg.sender, initialSupply);
+        __ERC20_init("the_web3", "WEB3");
     }
 
-    modifier onlyOwner() virtual {
+    modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can perform this action");
         _;
     }
@@ -33,7 +35,7 @@ contract TheWeb3TokenV1 is Initializable, ERC20, UUPSUpgradeable {
         return remainingSupply;
     }
 
-    function transferOwnership(address newOwner) external virtual onlyOwner {
+    function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "New owner cannot be zero address");
         owner = newOwner;
     }

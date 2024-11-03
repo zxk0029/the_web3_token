@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import "./TestSetup.sol";
 import {TheWeb3TokenV2} from "../src/TheWeb3TokenV2.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/proxy/utils/UUPSUpgradeable.sol";
 
 contract TokenUpgradeTest is TestSetup {
     function test_UpgradeToV2() public {
@@ -24,6 +24,6 @@ contract TokenUpgradeTest is TestSetup {
         TheWeb3TokenV2 proxyTokenV2 = TheWeb3TokenV2(payable(address(proxy)));
         assertEq(proxyTokenV2.owner(), owner);
         assertEq(proxyTokenV2.totalSupply(), oldTotalSupply);
-        assertEq(proxyTokenV2.mintFee(), 0.01 ether);
+        assertEq(proxyTokenV2.mintFee(), 0.001 ether);
     }
 } 

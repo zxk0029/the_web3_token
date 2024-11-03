@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Script.sol";
 import "../src/TheWeb3TokenV1.sol";
-import "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "@openzeppelin/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract DeployToken is Script {
     function run() external {

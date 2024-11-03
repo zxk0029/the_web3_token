@@ -46,20 +46,29 @@ DEPLOY_OUTPUT=$(forge script script/DeployToken.s.sol \
     --private-key $PRIVATE_KEY)
 
 if [ $? -eq 0 ]; then
-    # Extract proxy address from the output using grep and awk
+    # 从输出中提取代理合约地址
     PROXY_ADDRESS=$(echo "$DEPLOY_OUTPUT" | grep "Proxy deployed at:" | awk '{print $4}')
+    echo "Found Proxy Address: $PROXY_ADDRESS"
     
-    # Check if PROXY_ADDRESS was found
+    # 检查是否找到 PROXY_ADDRESS
     if [ ! -z "$PROXY_ADDRESS" ]; then
-        # Check if PROXY_ADDRESS already exists in .env
+        # 检查 .env 文件中是否已存在 PROXY_ADDRESS
         if grep -q "PROXY_ADDRESS=" .env; then
-            # Update existing PROXY_ADDRESS
+            # 更新现有的 PROXY_ADDRESS
             sed -i '' "s/PROXY_ADDRESS=.*/PROXY_ADDRESS=$PROXY_ADDRESS/" .env
         else
-            # Add new PROXY_ADDRESS
+            # 检查 .env 文件最后一个字符是否是换行符
+            if [ -n "$(tail -c 1 .env)" ]; then
+                # 如果最后一个字符不是换行符，先添加一个换行符
+                echo >> .env
+            fi
+            # 追加新的 PROXY_ADDRESS 到文件的末尾
             echo "PROXY_ADDRESS=$PROXY_ADDRESS" >> .env
         fi
-        echo "PROXY_ADDRESS has been saved to .env file"
+        echo "PROXY_ADDRESS ($PROXY_ADDRESS) has been saved to .env file"
+    else
+        echo "Warning: Could not find proxy address in deployment output"
+        echo "Please check the deployment output and manually add PROXY_ADDRESS to .env file"
     fi
     
     echo "Deployment and verification completed successfully!"

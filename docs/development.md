@@ -50,10 +50,10 @@ anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY --fork-block-
 cast call $CONTRACT_ADDRESS "mintFee()" --rpc-url http://localhost:8545
 
 # 查看 token 名称
-cast call $CONTRACT_ADDRESS "name()" --rpc-url http://localhost:8545
+cast call $CONTRACT_ADDRESS "name()(string)" --rpc-url http://localhost:8545
 
 # 查看 token 符号
-cast call $CONTRACT_ADDRESS "symbol()" --rpc-url http://localhost:8545
+cast call $CONTRACT_ADDRESS "symbol()(string)" --rpc-url http://localhost:8545
 
 # 查看某个地址的余额
 cast call $CONTRACT_ADDRESS "balanceOf(address)" <钱包地址> --rpc-url http://localhost:8545
@@ -61,7 +61,7 @@ cast call $CONTRACT_ADDRESS "balanceOf(address)" <钱包地址> --rpc-url http:/
 # 查看 owner
 cast call $CONTRACT_ADDRESS "owner()" --rpc-url http://localhost:8545
 ```
-
+CONTRACT_ADDRESS是部署后生成的Proxy Address
 ### 发送交易
 
 ```bash
